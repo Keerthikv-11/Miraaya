@@ -13,6 +13,7 @@ import {
   Star,
 } from 'lucide-react';
 import { cn } from '../utils/utils';
+import { API_URL } from '../api';
 
 interface BackendProduct {
   _id: string;
@@ -83,7 +84,7 @@ export const ProductDetails = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/products/${id}`
+          `${API_URL}/products/${id}`
         );
 
         if (!response.ok) {
@@ -162,7 +163,7 @@ export const ProductDetails = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/reviews/product/${id}`
+          `${API_URL}/reviews/product/${id}`
         );
 
         if (!response.ok) {
@@ -234,7 +235,7 @@ export const ProductDetails = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:5000/api/reviews',
+        `${API_URL}/reviews`,
         {
           method: 'POST',
           headers: {
@@ -270,7 +271,7 @@ export const ProductDetails = () => {
 
       // Refresh review summary from backend
       const reviewResponse = await fetch(
-        `http://localhost:5000/api/reviews/product/${id}`
+        `${API_URL}/reviews/product/${id}`
       );
 
       if (reviewResponse.ok) {
@@ -349,6 +350,7 @@ export const ProductDetails = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+
       {/* Breadcrumbs */}
 
       <div className="flex items-center gap-2 text-sm text-brand-600 mb-8 uppercase tracking-widest">
@@ -669,6 +671,7 @@ export const ProductDetails = () => {
         </div>
 
       </div>
+
       {/* ========================================
           REVIEWS & RATINGS
       ======================================== */}

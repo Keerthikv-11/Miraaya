@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../utils/utils';
 import toast from 'react-hot-toast';
+import { API_URL } from '../api';
 
 interface UserData {
   id?: string;
@@ -101,7 +102,7 @@ export const Account = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/orders/${userId}`
+          `${API_URL}/orders/${userId}`
         );
 
         const data = await response.json();

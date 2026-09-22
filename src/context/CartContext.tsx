@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { Product } from '../data/products';
 import toast from 'react-hot-toast';
+import { API_URL } from '../api';
 
 export interface CartItem {
   product: Product;
@@ -16,7 +17,11 @@ export interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product, quantity?: number, size?: string) => Promise<void>;
+  addToCart: (
+    product: Product,
+    quantity?: number,
+    size?: string
+  ) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -27,9 +32,11 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const API_URL = 'http://localhost:5000/api';
-
-export const CartProvider = ({ children }: { children: ReactNode }) => {
+export const CartProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartLoading, setCartLoading] = useState(false);
 
@@ -128,7 +135,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const addToCart = async (
     product: Product,
     quantity = 1,
-    size?: string
+    _size?: string
   ) => {
     const user = getUser();
 
@@ -176,11 +183,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       setCart(updatedCart);
 
-      if (size) {
-        toast.success(`Added ${product.name} to cart`);
-      } else {
-        toast.success(`Added ${product.name} to cart`);
-      }
+      toast.success(`Added ${product.name} to cart`);
     } catch (error: any) {
       console.error('Add to cart error:', error);
       toast.error(error.message || 'Failed to add product');

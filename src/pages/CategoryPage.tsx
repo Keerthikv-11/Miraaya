@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Product } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
 import { SlidersHorizontal } from 'lucide-react';
+import { API_URL } from '../api';
 
 interface CategoryPageProps {
   category: 'sarees' | 'jewellery' | 'dresses';
@@ -49,7 +50,7 @@ export const CategoryPage = ({
               : 'Dress';
 
         const response = await fetch(
-          `http://localhost:5000/api/products/category/${backendCategory}`
+          `${API_URL}/products/category/${backendCategory}`
         );
 
         if (!response.ok) {
@@ -73,9 +74,10 @@ export const CategoryPage = ({
           rating: 0,
           reviewCount: 0,
           stock: product.stock,
-          sizes: category === 'dresses'
-            ? ['XS', 'S', 'M', 'L', 'XL']
-            : undefined,
+          sizes:
+            category === 'dresses'
+              ? ['XS', 'S', 'M', 'L', 'XL']
+              : undefined,
           colors: [],
           fabric: '',
           material: '',
@@ -279,29 +281,33 @@ export const CategoryPage = ({
           )}
 
           {/* Empty */}
-          {!loading && !error && sortedProducts.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-xl text-brand-600">
-                No products found.
-              </p>
+          {!loading &&
+            !error &&
+            sortedProducts.length === 0 && (
+              <div className="text-center py-20">
+                <p className="text-xl text-brand-600">
+                  No products found.
+                </p>
 
-              <p className="text-sm text-brand-500 mt-2">
-                Add products from the Miraaya admin panel.
-              </p>
-            </div>
-          )}
+                <p className="text-sm text-brand-500 mt-2">
+                  Add products from the Miraaya admin panel.
+                </p>
+              </div>
+            )}
 
           {/* Products */}
-          {!loading && !error && sortedProducts.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sortedProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                />
-              ))}
-            </div>
-          )}
+          {!loading &&
+            !error &&
+            sortedProducts.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {sortedProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                  />
+                ))}
+              </div>
+            )}
         </div>
       </div>
     </div>

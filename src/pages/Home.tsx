@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Product } from '../data/products';
-
-const API_URL = 'http://localhost:5000/api';
+import { API_URL } from '../api';
 
 export const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -188,6 +187,7 @@ export const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
           {/* Sarees */}
+
           <Link
             to="/sarees"
             className="group relative h-[420px] md:h-[520px] overflow-hidden bg-brand-100"
@@ -230,6 +230,7 @@ export const Home = () => {
 
 
           {/* Dresses */}
+
           <Link
             to="/dresses"
             className="group relative h-[420px] md:h-[520px] overflow-hidden bg-brand-100"
@@ -272,6 +273,7 @@ export const Home = () => {
 
 
           {/* Jewellery - full width */}
+
           <Link
             to="/jewellery"
             className="group relative md:col-span-2 h-[300px] md:h-[360px] overflow-hidden bg-brand-100"
@@ -332,6 +334,7 @@ export const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center max-w-6xl mx-auto">
 
             {/* Image */}
+
             <div className="relative">
 
               <div className="absolute -top-4 -left-4 w-20 h-20 border-l border-t border-brand-300"></div>
@@ -358,6 +361,7 @@ export const Home = () => {
 
 
             {/* Content */}
+
             <div className="text-center md:text-left">
 
               <p className="text-xs uppercase tracking-[0.35em] text-brand-600 mb-5">
@@ -440,8 +444,6 @@ export const Home = () => {
 
             <div className="mt-9">
 
-
-
             </div>
 
           </div>
@@ -449,9 +451,6 @@ export const Home = () => {
         </div>
 
       </section>
-
-
-
 
     </div>
   );

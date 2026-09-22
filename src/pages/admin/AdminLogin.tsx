@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Button } from '../../components/Button';
+import { API_URL } from '../../api';
 
 export const AdminLogin = () => {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const AdminLogin = () => {
 
         try {
             const response = await fetch(
-                'http://localhost:5000/api/admin/auth/login',
+                `${API_URL}/admin/auth/login`,
                 {
                     method: 'POST',
                     headers: {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Button } from '../../components/Button';
+import { API_URL } from '../../api';
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export const Register = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:5000/api/auth/register',
+        `${API_URL}/auth/register`,
         {
           method: 'POST',
           headers: {

@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { Product } from '../data/products';
 import toast from 'react-hot-toast';
+import { API_URL } from '../api';
 
 interface WishlistContextType {
   wishlist: Product[];
@@ -17,8 +18,6 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(
   undefined
 );
-
-const API_URL = 'http://localhost:5000/api';
 
 export const WishlistProvider = ({
   children,
@@ -63,7 +62,10 @@ export const WishlistProvider = ({
       rating: 0,
       reviewCount: 0,
       stock: product.stock || 0,
-      sizes: product.category === 'Dress' ? ['S', 'M', 'L', 'XL'] : undefined,
+      sizes:
+        product.category === 'Dress'
+          ? ['S', 'M', 'L', 'XL']
+          : undefined,
       colors: [],
       fabric: '',
       material: '',

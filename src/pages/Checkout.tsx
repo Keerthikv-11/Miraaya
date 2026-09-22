@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/Button';
 import toast from 'react-hot-toast';
+import { API_URL } from '../api';
 
 declare global {
   interface Window {
@@ -16,9 +17,9 @@ export const Checkout = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const [paymentMethod, setPaymentMethod] = useState<'Razorpay' | 'COD'>(
-    'Razorpay'
-  );
+  const [paymentMethod, setPaymentMethod] = useState<
+    'Razorpay' | 'COD'
+  >('Razorpay');
 
   const [couponCode, setCouponCode] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
@@ -44,7 +45,8 @@ export const Checkout = () => {
   useEffect(() => {
     const script = document.createElement('script');
 
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.src =
+      'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
 
     document.body.appendChild(script);
@@ -59,7 +61,8 @@ export const Checkout = () => {
   // Free shipping for orders of ₹2000 or more
   const shipping = cartTotal >= 2000 ? 0 : 150;
 
-  const discountAmount = appliedCoupon?.discountAmount || 0;
+  const discountAmount =
+    appliedCoupon?.discountAmount || 0;
 
   const total = Math.max(
     0,
@@ -70,7 +73,9 @@ export const Checkout = () => {
     'w-full px-4 py-3 bg-white border border-brand-200 focus:outline-none focus:border-brand-900 text-sm rounded-sm transition-colors';
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
 
@@ -96,7 +101,7 @@ export const Checkout = () => {
       setCouponLoading(true);
 
       const response = await fetch(
-        'http://localhost:5000/api/coupons/apply',
+        `${API_URL}/coupons/apply`,
         {
           method: 'POST',
           headers: {
@@ -155,7 +160,9 @@ export const Checkout = () => {
   // CHECKOUT
   // ============================================================
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: React.FormEvent
+  ) => {
     e.preventDefault();
 
     if (cart.length === 0) {
@@ -164,10 +171,13 @@ export const Checkout = () => {
       return;
     }
 
-    const storedUser = localStorage.getItem('user');
+    const storedUser =
+      localStorage.getItem('user');
 
     if (!storedUser) {
-      toast.error('Please login before placing your order');
+      toast.error(
+        'Please login before placing your order'
+      );
       navigate('/login');
       return;
     }
@@ -214,7 +224,7 @@ export const Checkout = () => {
 
       if (paymentMethod === 'COD') {
         const response = await fetch(
-          `http://localhost:5000/api/orders/${userId}`,
+          `${API_URL}/orders/${userId}`,
           {
             method: 'POST',
             headers: {
@@ -222,7 +232,8 @@ export const Checkout = () => {
             },
             body: JSON.stringify({
               shippingAddress,
-              couponCode: appliedCoupon?.code || null,
+              couponCode:
+                appliedCoupon?.code || null,
             }),
           }
         );
@@ -231,13 +242,16 @@ export const Checkout = () => {
 
         if (!response.ok) {
           throw new Error(
-            data.message || 'Failed to place order'
+            data.message ||
+            'Failed to place order'
           );
         }
 
         await clearCart();
 
-        toast.success('Order placed successfully!');
+        toast.success(
+          'Order placed successfully!'
+        );
 
         navigate('/order-success', {
           state: {
@@ -259,19 +273,21 @@ export const Checkout = () => {
       }
 
       // Create Razorpay payment order on backend
-      const paymentOrderResponse = await fetch(
-        `http://localhost:5000/api/orders/${userId}/payment`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            shippingAddress,
-            couponCode: appliedCoupon?.code || null,
-          }),
-        }
-      );
+      const paymentOrderResponse =
+        await fetch(
+          `${API_URL}/orders/${userId}/payment`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              shippingAddress,
+              couponCode:
+                appliedCoupon?.code || null,
+            }),
+          }
+        );
 
       const paymentOrderData =
         await paymentOrderResponse.json();
@@ -296,9 +312,11 @@ export const Checkout = () => {
 
         name: 'Miraaya',
 
-        description: 'Miraaya Fashion Order',
+        description:
+          'Miraaya Fashion Order',
 
-        order_id: paymentOrderData.razorpayOrderId,
+        order_id:
+          paymentOrderData.razorpayOrderId,
 
         prefill: {
           name: shippingAddress.name,
@@ -314,37 +332,45 @@ export const Checkout = () => {
           color: '#6b4f3a',
         },
 
-        handler: async function (response: any) {
+        handler: async function (
+          response: any
+        ) {
           try {
-            toast.loading('Verifying payment...', {
-              id: 'payment-verification',
-            });
-
-            // Verify payment on our backend
-            const verifyResponse = await fetch(
-              `http://localhost:5000/api/orders/${userId}/payment/verify`,
+            toast.loading(
+              'Verifying payment...',
               {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  razorpay_order_id:
-                    response.razorpay_order_id,
-
-                  razorpay_payment_id:
-                    response.razorpay_payment_id,
-
-                  razorpay_signature:
-                    response.razorpay_signature,
-
-                  shippingAddress,
-
-                  couponCode:
-                    appliedCoupon?.code || null,
-                }),
+                id: 'payment-verification',
               }
             );
+
+            // Verify payment on our backend
+            const verifyResponse =
+              await fetch(
+                `${API_URL}/orders/${userId}/payment/verify`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type':
+                      'application/json',
+                  },
+                  body: JSON.stringify({
+                    razorpay_order_id:
+                      response.razorpay_order_id,
+
+                    razorpay_payment_id:
+                      response.razorpay_payment_id,
+
+                    razorpay_signature:
+                      response.razorpay_signature,
+
+                    shippingAddress,
+
+                    couponCode:
+                      appliedCoupon?.code ||
+                      null,
+                  }),
+                }
+              );
 
             const verifyData =
               await verifyResponse.json();
@@ -400,7 +426,8 @@ export const Checkout = () => {
         },
       };
 
-      const razorpay = new window.Razorpay(options);
+      const razorpay =
+        new window.Razorpay(options);
 
       razorpay.on(
         'payment.failed',
@@ -519,7 +546,6 @@ export const Checkout = () => {
               </div>
             </section>
 
-
             {/* ==================================================
                 DELIVERY ADDRESS
             ================================================== */}
@@ -567,7 +593,9 @@ export const Checkout = () => {
                   onChange={handleChange}
                   className={inputClass}
                 >
-                  <option value="">State</option>
+                  <option value="">
+                    State
+                  </option>
 
                   <option value="Andhra Pradesh">
                     Andhra Pradesh
@@ -672,7 +700,6 @@ export const Checkout = () => {
               </div>
             </section>
 
-
             {/* ==================================================
                 PAYMENT
             ================================================== */}
@@ -701,10 +728,13 @@ export const Checkout = () => {
                       name="paymentMethod"
                       value="Razorpay"
                       checked={
-                        paymentMethod === 'Razorpay'
+                        paymentMethod ===
+                        'Razorpay'
                       }
                       onChange={() =>
-                        setPaymentMethod('Razorpay')
+                        setPaymentMethod(
+                          'Razorpay'
+                        )
                       }
                       className="text-brand-900 focus:ring-brand-900"
                     />
@@ -728,7 +758,6 @@ export const Checkout = () => {
                   </span>
 
                 </label>
-
 
                 {/* COD */}
 
@@ -777,7 +806,6 @@ export const Checkout = () => {
           </form>
         </div>
 
-
         {/* ======================================================
             ORDER SUMMARY
         ====================================================== */}
@@ -789,7 +817,6 @@ export const Checkout = () => {
             <h3 className="font-serif text-2xl mb-6">
               Order Summary
             </h3>
-
 
             {/* Cart Items */}
 
@@ -816,7 +843,6 @@ export const Checkout = () => {
 
                   </div>
 
-
                   <div className="flex-grow">
 
                     <h4 className="font-medium text-sm text-brand-900 leading-tight mb-1">
@@ -831,7 +857,6 @@ export const Checkout = () => {
 
                   </div>
 
-
                   <div className="font-medium text-sm">
                     ₹
                     {(
@@ -845,7 +870,6 @@ export const Checkout = () => {
               ))}
 
             </div>
-
 
             {/* ==================================================
                 COUPON
@@ -919,7 +943,6 @@ export const Checkout = () => {
 
             </div>
 
-
             {/* ==================================================
                 PRICE SUMMARY
             ================================================== */}
@@ -938,7 +961,6 @@ export const Checkout = () => {
 
               </div>
 
-
               <div className="flex justify-between">
 
                 <span>
@@ -952,7 +974,6 @@ export const Checkout = () => {
                 </span>
 
               </div>
-
 
               {discountAmount > 0 && (
 
@@ -973,7 +994,6 @@ export const Checkout = () => {
 
             </div>
 
-
             {/* Total */}
 
             <div className="border-t border-brand-200 pt-6 mb-8">
@@ -991,7 +1011,6 @@ export const Checkout = () => {
               </div>
 
             </div>
-
 
             {/* Submit */}
 

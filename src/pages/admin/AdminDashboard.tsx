@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { API_URL } from '../../api';
 import {
     Plus,
     Trash2,
@@ -19,7 +20,7 @@ import {
     Clock,
 } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api';
+
 
 interface AdminProduct {
     _id: string;
