@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { CartProvider } from './context/CartContext';
@@ -38,6 +37,7 @@ function App() {
             }}
           />
           <Routes>
+            {/* Customer Pages (with Header & Footer layout) */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<Home />} />
               <Route
@@ -59,9 +59,11 @@ function App() {
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="account" element={<Account />} />
-              <Route path="admin-login" element={<AdminLogin />} />
-              <Route path="admin" element={<AdminDashboard />} />
             </Route>
+
+            {/* Admin Pages (Standalone without Customer Header/Footer) */}
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </WishlistProvider>
       </CartProvider>

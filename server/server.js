@@ -15,6 +15,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
 const Admin = require("./models/Admin");
 const uploadRoutes = require("./routes/uploadRoutes");
+const bannerRoutes = require("./routes/bannerRoutes");
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/banners", bannerRoutes);
 
 // Admin authentication
 app.use("/api/admin/auth", adminAuthRoutes);
@@ -48,37 +50,49 @@ app.use("/api/upload", uploadRoutes);
 // MONGODB CONNECTION
 // ===============================
 
-mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(async () => {
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 3000 });
         console.log("MongoDB connected successfully!");
+    } catch (error) {
+        console.warn("Local MongoDB URI failed, connecting to In-Memory MongoDB...");
+        try {
+            const { MongoMemoryServer } = require("mongodb-memory-server");
+            const mongoServer = await MongoMemoryServer.create();
+            const uri = mongoServer.getUri();
+            await mongoose.connect(uri);
+            console.log("In-Memory MongoDB connected successfully!");
+        } catch (memErr) {
+            console.error("MongoDB connection failed completely:", memErr.message);
+            return;
+        }
+    }
 
-        // Check whether admin already exists
-        const existingAdmin = await Admin.findOne({
-            email: process.env.ADMIN_EMAIL,
-        });
+    try {
+        const adminEmail = (process.env.ADMIN_EMAIL || "admin@miraaya.com").toLowerCase().trim();
+        const adminPassword = process.env.ADMIN_PASSWORD || "MiraayaAdmin123";
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+
+        const existingAdmin = await Admin.findOne({ email: adminEmail });
 
         if (!existingAdmin) {
-            const hashedPassword = await bcrypt.hash(
-                process.env.ADMIN_PASSWORD,
-                10
-            );
-
             await Admin.create({
                 name: "Miraaya Admin",
-                email: process.env.ADMIN_EMAIL,
+                email: adminEmail,
                 password: hashedPassword,
             });
-
             console.log("Default Miraaya admin created successfully!");
+        } else {
+            existingAdmin.password = hashedPassword;
+            await existingAdmin.save();
+            console.log("Miraaya admin password synced successfully!");
         }
-    })
-    .catch((error) => {
-        console.error(
-            "MongoDB connection failed:",
-            error.message
-        );
-    });
+    } catch (adminErr) {
+        console.error("Error creating/updating admin:", adminErr.message);
+    }
+};
+
+connectDB();
 
 // ===============================
 // TEST ROUTE

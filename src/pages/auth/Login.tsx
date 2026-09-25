@@ -122,14 +122,25 @@ export const Login = () => {
           </Button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-brand-600 border-t border-brand-100 pt-6">
-          Don't have an account?{' '}
-          <Link
-            to="/register"
-            className="text-brand-900 underline hover:text-brand-600"
-          >
-            Create Account
-          </Link>
+        <div className="mt-8 text-center text-sm text-brand-600 border-t border-brand-100 pt-6 space-y-4">
+          <div>
+            Don't have an account?{' '}
+            <Link
+              to="/register"
+              className="text-brand-900 underline hover:text-brand-600 font-medium"
+            >
+              Create Account
+            </Link>
+          </div>
+
+          <div className="pt-2">
+            <Link
+              to="/admin-login"
+              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-brand-50 hover:bg-brand-900 text-brand-800 hover:text-white text-xs font-semibold uppercase tracking-widest rounded transition-all border border-brand-200"
+            >
+              Go to Admin Login
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -147,11 +147,7 @@ router.put("/products/:id/stock", async (req, res) => {
     }
 });
 
-// ===============================
-// ORDERS
-// ===============================
 
-// Get all orders
 router.get("/orders", async (req, res) => {
     try {
         const orders = await Order.find()

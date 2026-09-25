@@ -1,13 +1,73 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '../data/products';
 import { API_URL } from '../api';
 
+interface HomeBanner {
+  _id: string;
+  title: string;
+  subtitle?: string;
+  image: string;
+  link?: string;
+}
+
+const defaultBanners: HomeBanner[] = [
+  {
+    _id: 'default-1',
+    title: 'Elegance Redefined',
+    subtitle: 'Handcrafted Sarees & Statement Jewellery for Every Celebration',
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=1600',
+    link: '/sarees',
+  },
+  {
+    _id: 'default-2',
+    title: 'Royal Statement Jewellery',
+    subtitle: 'Discover Exquisite Kundan & Gold Plated Necklaces',
+    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=1600',
+    link: '/jewellery',
+  },
+  {
+    _id: 'default-3',
+    title: 'Effortless Modern Dresses',
+    subtitle: 'Graceful Fusion Outfits & Contemporary Ethnic Wear',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=1600',
+    link: '/dresses',
+  },
+];
+
 export const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [banners, setBanners] = useState<HomeBanner[]>(defaultBanners);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const response = await fetch(`${API_URL}/banners`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.length > 0) {
+            setBanners(data);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch home banners:', err);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners.length]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -53,10 +113,6 @@ export const Home = () => {
     fetchProducts();
   }, []);
 
-  /*
-   * Keep New Arrivals as the only main product-grid section.
-   * This avoids repeating the same product layout three times.
-   */
   const newArrivals = products.slice(0, 4);
 
   const sareeProducts = products.filter(
@@ -78,8 +134,92 @@ export const Home = () => {
       ? items[0].images[0]
       : '';
 
+  const activeBanner = banners[currentSlide] || banners[0];
+
   return (
     <div className="flex flex-col pb-20">
+
+      {/* =========================================================
+          HERO BILLBOARD / ADVERTISEMENT BANNER
+      ========================================================== */}
+      <section className="relative w-full overflow-hidden bg-brand-900 text-white min-h-[480px] md:min-h-[580px] flex items-center">
+        {/* Banner Background Image */}
+        <div className="absolute inset-0 z-0">
+          {banners.map((banner, idx) => (
+            <div
+              key={banner._id}
+              className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlide ? 'opacity-100 scale-105' : 'opacity-0 scale-100'} transition-transform duration-10000 ease-out`}
+            >
+              <img
+                src={banner.image}
+                alt={banner.title}
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Banner Content */}
+        <div className="container mx-auto px-6 md:px-12 relative z-10 py-16">
+          <div className="max-w-2xl animate-in fade-in slide-in-from-left duration-500 key={activeBanner._id}">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold uppercase tracking-widest text-brand-200 mb-6">
+              <Sparkles size={14} className="text-amber-300" /> Featured Advertisement
+            </div>
+            
+            <h1 className="font-serif text-3xl md:text-6xl font-light text-white leading-tight mb-4 drop-shadow-md">
+              {activeBanner.title}
+            </h1>
+
+            {activeBanner.subtitle && (
+              <p className="text-brand-100 text-base md:text-xl font-light leading-relaxed mb-8 max-w-lg drop-shadow">
+                {activeBanner.subtitle}
+              </p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                to={activeBanner.link || '/sarees'}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-white text-brand-900 hover:bg-brand-100 text-xs uppercase tracking-widest font-semibold rounded-sm shadow-lg transition-all transform hover:-translate-y-0.5"
+              >
+                Explore Collection
+                <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Carousel Prev/Next Controls */}
+        {banners.length > 1 && (
+          <>
+            <button
+              onClick={() => setCurrentSlide((prev) => (prev === 0 ? banners.length - 1 : prev - 1))}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-sm transition-all"
+              title="Previous Banner"
+            >
+              <ChevronLeft size={22} />
+            </button>
+            <button
+              onClick={() => setCurrentSlide((prev) => (prev + 1) % banners.length)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-sm transition-all"
+              title="Next Banner"
+            >
+              <ChevronRight size={22} />
+            </button>
+
+            {/* Slide Indicators */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+              {banners.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`h-2 rounded-full transition-all ${idx === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </section>
 
       {/* =========================================================
           NEW ARRIVALS

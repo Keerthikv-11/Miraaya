@@ -18,7 +18,34 @@ import {
     CreditCard,
     IndianRupee,
     Clock,
+    Image,
 } from 'lucide-react';
+
+interface AdminBanner {
+    _id: string;
+    title: string;
+    subtitle?: string;
+    image: string;
+    link?: string;
+    isActive: boolean;
+    createdAt?: string;
+}
+
+interface BannerForm {
+    title: string;
+    subtitle: string;
+    image: string;
+    link: string;
+    isActive: boolean;
+}
+
+const emptyBannerForm: BannerForm = {
+    title: '',
+    subtitle: '',
+    image: '',
+    link: '/sarees',
+    isActive: true,
+};
 
 
 
@@ -91,7 +118,7 @@ interface AdminCustomer {
     createdAt?: string;
 }
 
-type ActiveTab = 'products' | 'orders' | 'customers';
+type ActiveTab = 'products' | 'orders' | 'customers' | 'banners';
 
 type OrderFilter =
     | 'All'
@@ -116,7 +143,7 @@ const emptyProductForm: ProductForm = {
     name: '',
     description: '',
     price: '',
-    category: 'Sarees',
+    category: 'Saree',
     image: '',
     stock: '0',
     isAvailable: true,
@@ -214,6 +241,21 @@ const AdminDashboard: React.FC = () => {
     const [togglingProductId, setTogglingProductId] =
         useState<string | null>(null);
 
+    const [banners, setBanners] =
+        useState<AdminBanner[]>([]);
+
+    const [selectedCategoryFilter, setSelectedCategoryFilter] =
+        useState<string>('All');
+
+    const [showBannerForm, setShowBannerForm] =
+        useState(false);
+
+    const [bannerForm, setBannerForm] =
+        useState<BannerForm>(emptyBannerForm);
+
+    const [savingBanner, setSavingBanner] =
+        useState(false);
+
     /*
      * Check whether admin is logged in.
      */
@@ -233,6 +275,7 @@ const AdminDashboard: React.FC = () => {
                     fetchProducts(),
                     fetchOrders(),
                     fetchCustomers(),
+                    fetchBanners(),
                 ]);
             } finally {
                 setLoading(false);
@@ -390,6 +433,7 @@ const AdminDashboard: React.FC = () => {
                 fetchProducts(),
                 fetchOrders(),
                 fetchCustomers(),
+                fetchBanners(),
             ]);
 
             toast.success('Dashboard refreshed');
@@ -398,6 +442,286 @@ const AdminDashboard: React.FC = () => {
         } finally {
             setRefreshing(false);
         }
+    };
+
+    /*
+     * -----------------------------
+     * FETCH BANNERS
+     * -----------------------------
+     */
+    const fetchBanners = async () => {
+        try {
+            const response = await fetch(`${API_URL}/banners/admin/all`);
+            if (response.ok) {
+                const data = await response.json();
+                setBanners(Array.isArray(data) ? data : []);
+            }
+        } catch (error) {
+            console.error('Error fetching admin banners:', error);
+        }
+    };
+
+    /*
+     * -----------------------------
+     * BANNER ACTIONS & HANDLERS
+     * -----------------------------
+     */
+    const openAddBanner = () => {
+        setBannerForm(emptyBannerForm);
+        setShowBannerForm(true);
+    };
+
+    const handleSaveBanner = async (event: React.FormEvent) => {
+        event.preventDefault();
+
+        if (!bannerForm.title.trim() || !bannerForm.image.trim()) {
+            toast.error('Please enter a banner title and image URL');
+            return;
+        }
+
+        try {
+            setSavingBanner(true);
+            const response = await fetch(`${API_URL}/banners/admin`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bannerForm),
+            });
+
+            const data = await readResponse(response);
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to save banner');
+            }
+
+            toast.success('Billboard banner added successfully');
+            setShowBannerForm(false);
+            setBannerForm(emptyBannerForm);
+            await fetchBanners();
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to save banner');
+        } finally {
+            setSavingBanner(false);
+        }
+    };
+
+    const toggleBannerActive = async (id: string, isActive: boolean) => {
+        try {
+            const response = await fetch(`${API_URL}/banners/admin/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isActive }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update banner status');
+            }
+
+            toast.success(isActive ? 'Banner activated' : 'Banner disabled');
+            await fetchBanners();
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to update banner');
+        }
+    };
+
+    const handleDeleteBanner = async (id: string) => {
+        if (!window.confirm('Are you sure you want to delete this advertisement banner?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/banners/admin/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete banner');
+            }
+
+            toast.success('Banner deleted successfully');
+            await fetchBanners();
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to delete banner');
+        }
+    };
+
+    const renderBannerForm = () => {
+        if (!showBannerForm) return null;
+
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
+                    <div className="mb-6 flex items-center justify-between">
+                        <div>
+                            <h2 className="text-2xl font-semibold text-gray-900">Add Billboard / Advertisement</h2>
+                            <p className="mt-1 text-sm text-gray-500">Feature a new promotional banner on the customer homepage.</p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setShowBannerForm(false)}
+                            className="rounded-full p-2 text-gray-500 hover:bg-gray-100"
+                        >
+                            <XCircle size={24} />
+                        </button>
+                    </div>
+
+                    <form onSubmit={handleSaveBanner} className="space-y-5">
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Banner Title *</label>
+                            <input
+                                required
+                                type="text"
+                                value={bannerForm.title}
+                                onChange={(e) => setBannerForm({ ...bannerForm, title: e.target.value })}
+                                placeholder="e.g. Royal Bridal Saree Fest"
+                                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-gray-900"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Subtitle / Offer Description</label>
+                            <input
+                                type="text"
+                                value={bannerForm.subtitle}
+                                onChange={(e) => setBannerForm({ ...bannerForm, subtitle: e.target.value })}
+                                placeholder="e.g. Up to 40% off on handcrafted silk sarees & Kundan sets"
+                                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-gray-900"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Image URL *</label>
+                            <input
+                                required
+                                type="text"
+                                value={bannerForm.image}
+                                onChange={(e) => setBannerForm({ ...bannerForm, image: e.target.value })}
+                                placeholder="https://images.unsplash.com/..."
+                                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-gray-900"
+                            />
+                            {bannerForm.image && (
+                                <div className="mt-3">
+                                    <img
+                                        src={bannerForm.image}
+                                        alt="Banner Preview"
+                                        className="h-32 w-full rounded-xl object-cover"
+                                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Target Link URL</label>
+                            <select
+                                value={bannerForm.link}
+                                onChange={(e) => setBannerForm({ ...bannerForm, link: e.target.value })}
+                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-gray-900"
+                            >
+                                <option value="/sarees">Sarees Collection (/sarees)</option>
+                                <option value="/jewellery">Jewellery Collection (/jewellery)</option>
+                                <option value="/dresses">Dresses Collection (/dresses)</option>
+                                <option value="/">Homepage (/)</option>
+                            </select>
+                        </div>
+
+                        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-end">
+                            <button
+                                type="button"
+                                onClick={() => setShowBannerForm(false)}
+                                className="rounded-xl border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={savingBanner}
+                                className="rounded-xl bg-gray-900 px-6 py-3 font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+                            >
+                                {savingBanner ? 'Saving...' : 'Add Billboard Banner'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    };
+
+    const renderBanners = () => {
+        return (
+            <div className="space-y-6">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <h2 className="text-2xl font-semibold text-gray-900">Billboard & Advertisements</h2>
+                        <p className="mt-1 text-sm text-gray-500">Manage hero carousel banners and promotional advertisements displayed on the main customer page.</p>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={openAddBanner}
+                        className="flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-5 py-3 font-medium text-white hover:bg-gray-800"
+                    >
+                        <Plus size={18} />
+                        Add Advertisement
+                    </button>
+                </div>
+
+                {banners.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
+                        <Image size={45} className="mx-auto mb-4 text-gray-300" />
+                        <h3 className="text-lg font-semibold text-gray-800">No Custom Advertisements</h3>
+                        <p className="mt-1 text-sm text-gray-500">Add banner images to customize the homepage hero billboard.</p>
+                        <button
+                            type="button"
+                            onClick={openAddBanner}
+                            className="mt-5 rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-gray-800"
+                        >
+                            Add Advertisement Banner
+                        </button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {banners.map((banner) => (
+                            <div key={banner._id} className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm flex flex-col justify-between">
+                                <div className="relative h-48 w-full bg-gray-100">
+                                    <img src={banner.image} alt={banner.title} className="h-full w-full object-cover" />
+                                    <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${banner.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                        {banner.isActive ? 'Active' : 'Disabled'}
+                                    </span>
+                                </div>
+                                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-gray-900">{banner.title}</h3>
+                                        {banner.subtitle && <p className="text-sm text-gray-500 mt-1">{banner.subtitle}</p>}
+                                        {banner.link && (
+                                            <p className="text-xs text-gray-400 mt-2 font-mono">
+                                                Link: {banner.link}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleBannerActive(banner._id, !banner.isActive)}
+                                            className={`text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-lg border transition ${banner.isActive ? 'border-gray-300 text-gray-700 hover:bg-gray-100' : 'border-green-300 bg-green-50 text-green-700 hover:bg-green-100'}`}
+                                        >
+                                            {banner.isActive ? 'Deactivate' : 'Activate Banner'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDeleteBanner(banner._id)}
+                                            className="rounded-lg p-2 text-red-500 hover:bg-red-50"
+                                            title="Delete Banner"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
     };
 
     /*
@@ -561,7 +885,7 @@ const AdminDashboard: React.FC = () => {
             name: product.name || '',
             description: product.description || '',
             price: String(product.price ?? ''),
-            category: product.category || 'Sarees',
+            category: product.category || 'Saree',
             image: product.image || '',
             stock: String(product.stock ?? 0),
             isAvailable: product.isAvailable !== false,
@@ -659,6 +983,7 @@ const AdminDashboard: React.FC = () => {
 
             if (!response.ok) {
                 throw new Error(
+                    data.error ||
                     data.message ||
                     `Failed to ${isEditing ? 'update' : 'add'} product`
                 );
@@ -859,17 +1184,19 @@ const AdminDashboard: React.FC = () => {
      */
 
     const filteredProducts = products.filter((product) => {
+        const matchesCategory =
+            selectedCategoryFilter === 'All' ||
+            product.category === selectedCategoryFilter;
+
         const search = searchTerm.toLowerCase().trim();
 
-        if (!search) {
-            return true;
-        }
-
-        return (
+        const matchesSearch =
+            !search ||
             product.name?.toLowerCase().includes(search) ||
             product.category?.toLowerCase().includes(search) ||
-            product.description?.toLowerCase().includes(search)
-        );
+            product.description?.toLowerCase().includes(search);
+
+        return matchesCategory && matchesSearch;
     });
 
     /*
@@ -1149,7 +1476,7 @@ const AdminDashboard: React.FC = () => {
                                     Sarees
                                 </option>
 
-                                <option value="Dresse">
+                                <option value="Dress">
                                     Dresses
                                 </option>
 
@@ -1292,23 +1619,38 @@ const AdminDashboard: React.FC = () => {
 
                 </div>
 
-                {/* Search */}
-                <div className="relative">
+                {/* Search and Category Filter Dropdown */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
 
-                    <Search
-                        size={19}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
+                    <div className="relative flex-1">
+                        <Search
+                            size={19}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
 
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(event) =>
-                            setSearchTerm(event.target.value)
-                        }
-                        placeholder="Search products..."
-                        className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 outline-none focus:border-gray-900"
-                    />
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(event) =>
+                                setSearchTerm(event.target.value)
+                            }
+                            placeholder="Search products by name, description..."
+                            className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 outline-none focus:border-gray-900"
+                        />
+                    </div>
+
+                    <div className="w-full sm:w-60">
+                        <select
+                            value={selectedCategoryFilter}
+                            onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+                            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 outline-none focus:border-gray-900 cursor-pointer shadow-sm"
+                        >
+                            <option value="All">All Categories</option>
+                            <option value="Saree">Sarees</option>
+                            <option value="Jewellery">Jewellery</option>
+                            <option value="Dress">Dresses</option>
+                        </select>
+                    </div>
 
                 </div>
 
@@ -2179,7 +2521,7 @@ const AdminDashboard: React.FC = () => {
           TOP BAR
           ================================ */}
 
-            <header className="sticky top-0 z-40 border-b border-gray-200 bg-white">
+            <header className="sticky top-3  z-40 border-b border-gray-200 bg-white">
 
                 <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
 
@@ -2450,6 +2792,21 @@ const AdminDashboard: React.FC = () => {
                             Customers
                         </button>
 
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setActiveTab('banners');
+                                setSearchTerm('');
+                            }}
+                            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition ${activeTab === 'banners'
+                                ? 'bg-gray-900 text-white'
+                                : 'text-gray-600 hover:bg-gray-100'
+                                }`}
+                        >
+                            <Image size={17} />
+                            Billboards & Ads
+                        </button>
+
                     </div>
 
                 </div>
@@ -2469,9 +2826,16 @@ const AdminDashboard: React.FC = () => {
                     {activeTab === 'customers' &&
                         renderCustomers()}
 
+                    {activeTab === 'banners' &&
+                        renderBanners()}
+
                 </div>
 
             </div>
+
+            {/* Modals */}
+            {renderProductForm()}
+            {renderBannerForm()}
 
         </div>
     );
