@@ -57,20 +57,20 @@ export const Register = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-20 flex justify-center items-center min-h-[70vh]">
-      <div className="w-full max-w-md bg-white p-8 md:p-12 border border-brand-100 shadow-sm rounded-sm">
-        <h1 className="font-serif text-3xl mb-2 text-center">
+    <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12 flex justify-center items-center min-h-[60vh]">
+      <div className="w-full max-w-[360px] bg-white p-4 sm:p-6 border border-brand-100 shadow-2xs rounded-xs">
+        <h1 className="font-serif text-lg sm:text-xl font-semibold mb-1 text-center text-brand-900">
           Create Account
         </h1>
 
-        <p className="text-center text-brand-500 mb-8 text-sm">
+        <p className="text-center text-brand-500 mb-4 text-xs">
           Join Miraaya for a premium experience.
         </p>
 
-        <form onSubmit={handleRegister} className="space-y-5">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleRegister} className="space-y-2.5">
+          <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs uppercase tracking-widest text-brand-600 mb-2">
+              <label className="block text-[10px] font-semibold uppercase tracking-wider text-brand-600 mb-1">
                 First Name
               </label>
 
@@ -79,13 +79,13 @@ export const Register = () => {
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-4 py-3 bg-brand-50 border border-brand-100 focus:outline-none focus:border-brand-900 text-sm rounded-sm"
+                className="w-full px-2.5 py-1.5 bg-brand-50/60 border border-brand-200 focus:outline-none focus:border-brand-900 text-xs rounded-xs"
                 placeholder="First name"
               />
             </div>
 
             <div>
-              <label className="block text-xs uppercase tracking-widest text-brand-600 mb-2">
+              <label className="block text-[10px] font-semibold uppercase tracking-wider text-brand-600 mb-1">
                 Last Name
               </label>
 
@@ -94,14 +94,14 @@ export const Register = () => {
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-4 py-3 bg-brand-50 border border-brand-100 focus:outline-none focus:border-brand-900 text-sm rounded-sm"
+                className="w-full px-2.5 py-1.5 bg-brand-50/60 border border-brand-200 focus:outline-none focus:border-brand-900 text-xs rounded-xs"
                 placeholder="Last name"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-widest text-brand-600 mb-2">
+            <label className="block text-[10px] font-semibold uppercase tracking-wider text-brand-600 mb-1">
               Email Address
             </label>
 
@@ -110,13 +110,13 @@ export const Register = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-brand-50 border border-brand-100 focus:outline-none focus:border-brand-900 text-sm rounded-sm"
+              className="w-full px-2.5 py-1.5 bg-brand-50/60 border border-brand-200 focus:outline-none focus:border-brand-900 text-xs rounded-xs"
               placeholder="Enter your email"
             />
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-widest text-brand-600 mb-2">
+            <label className="block text-[10px] font-semibold uppercase tracking-wider text-brand-600 mb-1">
               Phone Number
             </label>
 
@@ -125,13 +125,13 @@ export const Register = () => {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-3 bg-brand-50 border border-brand-100 focus:outline-none focus:border-brand-900 text-sm rounded-sm"
+              className="w-full px-2.5 py-1.5 bg-brand-50/60 border border-brand-200 focus:outline-none focus:border-brand-900 text-xs rounded-xs"
               placeholder="Enter your phone number"
             />
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-widest text-brand-600 mb-2">
+            <label className="block text-[10px] font-semibold uppercase tracking-wider text-brand-600 mb-1">
               Password
             </label>
 
@@ -140,7 +140,7 @@ export const Register = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-brand-50 border border-brand-100 focus:outline-none focus:border-brand-900 text-sm rounded-sm"
+              className="w-full px-2.5 py-1.5 bg-brand-50/60 border border-brand-200 focus:outline-none focus:border-brand-900 text-xs rounded-xs"
               placeholder="Create a password"
               minLength={6}
             />
@@ -149,18 +149,18 @@ export const Register = () => {
           <Button
             type="submit"
             fullWidth
-            className="mt-4"
+            className="mt-2 text-xs py-2"
             disabled={loading}
           >
             {loading ? 'Creating Account...' : 'Register'}
           </Button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-brand-600 border-t border-brand-100 pt-6">
+        <div className="mt-4 text-center text-xs text-brand-600 border-t border-brand-100 pt-3">
           Already have an account?{' '}
           <Link
             to="/login"
-            className="text-brand-900 underline hover:text-brand-600"
+            className="text-brand-900 underline hover:text-brand-600 font-semibold"
           >
             Sign In
           </Link>

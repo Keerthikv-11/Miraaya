@@ -349,11 +349,11 @@ export const ProductDetails = () => {
   const isOutOfStock = product.stock <= 0;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-3 sm:px-6 py-4 sm:py-8">
 
       {/* Breadcrumbs */}
 
-      <div className="flex items-center gap-2 text-sm text-brand-600 mb-8 uppercase tracking-widest">
+      <div className="flex items-center gap-2 text-xs sm:text-sm text-brand-600 mb-6 sm:mb-8 uppercase tracking-wider">
 
         <button
           onClick={() => navigate(-1)}
@@ -374,28 +374,28 @@ export const ProductDetails = () => {
 
         <span>/</span>
 
-        <span className="text-brand-900 font-medium truncate w-40">
+        <span className="text-brand-900 font-medium truncate w-32 sm:w-40">
           {product.name}
         </span>
 
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-12 mb-20">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mb-16 sm:mb-20">
 
         {/* Product Images */}
 
-        <div className="w-full lg:w-1/2 flex flex-col-reverse md:flex-row gap-4">
+        <div className="w-full lg:w-1/2 flex flex-col-reverse md:flex-row gap-3 sm:gap-4">
 
           {/* Thumbnails */}
 
-          <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-y-auto md:max-h-[800px] no-scrollbar">
+          <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto md:max-h-[800px] no-scrollbar">
 
             {product.images.map((img, i) => (
               <button
                 key={i}
                 onClick={() => setActiveImage(img)}
                 className={cn(
-                  'flex-shrink-0 w-20 md:w-24 aspect-[3/4] overflow-hidden rounded-sm border-2 transition-colors',
+                  'flex-shrink-0 w-16 sm:w-20 md:w-24 aspect-[3/4] overflow-hidden rounded-xs border-2 transition-colors',
                   activeImage === img
                     ? 'border-brand-900'
                     : 'border-transparent opacity-70 hover:opacity-100'
@@ -413,7 +413,7 @@ export const ProductDetails = () => {
 
           {/* Main Image */}
 
-          <div className="flex-grow aspect-[3/4] bg-brand-100 rounded-sm overflow-hidden group cursor-zoom-in relative">
+          <div className="flex-grow aspect-[3/4] bg-brand-100 rounded-xs overflow-hidden group cursor-zoom-in relative">
 
             <img
               src={activeImage}
@@ -423,7 +423,7 @@ export const ProductDetails = () => {
             />
 
             {isOutOfStock && (
-              <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-1 text-sm font-medium tracking-widest rounded-sm uppercase">
+              <div className="absolute top-3 left-3 bg-black/85 text-white px-2.5 py-1 text-xs font-medium tracking-wider rounded-xs uppercase">
                 Out of Stock
               </div>
             )}
@@ -436,11 +436,11 @@ export const ProductDetails = () => {
 
         <div className="w-full lg:w-1/2 flex flex-col">
 
-          <div className="mb-2 text-sm text-brand-600 uppercase tracking-widest">
+          <div className="mb-1 text-xs text-brand-600 uppercase tracking-widest font-medium">
             {product.category}
           </div>
 
-          <h1 className="font-serif text-3xl md:text-5xl mb-4 leading-tight">
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-3 sm:mb-4 leading-tight text-brand-900">
             {product.name}
           </h1>
 

@@ -58,26 +58,26 @@ export const AdminLogin = () => {
     };
 
     return (
-        <div className="min-h-screen bg-brand-50 flex items-center justify-center px-4">
-            <div className="w-full max-w-md bg-white p-8 md:p-12 border border-brand-100 shadow-sm rounded-sm">
+        <div className="min-h-screen bg-brand-50 flex items-center justify-center px-4 py-8">
+            <div className="w-full max-w-md bg-white p-6 sm:p-10 border border-brand-100 shadow-xs rounded-xs">
 
-                <div className="text-center mb-8">
-                    <h1 className="font-serif text-4xl text-brand-900 mb-2">
+                <div className="text-center mb-6">
+                    <h1 className="font-serif text-2xl sm:text-3xl font-semibold tracking-wider text-brand-900 mb-1">
                         MIRAAYA
                     </h1>
 
-                    <p className="text-brand-600 text-sm">
+                    <p className="text-brand-600 text-xs sm:text-sm uppercase tracking-widest font-medium">
                         Admin Portal
                     </p>
                 </div>
 
-                <div className="border-t border-brand-100 pt-8">
+                <div className="border-t border-brand-100 pt-6">
 
-                    <h2 className="font-serif text-2xl text-center mb-2">
+                    <h2 className="font-serif text-xl sm:text-2xl text-center mb-1 text-brand-900">
                         Admin Sign In
                     </h2>
 
-                    <p className="text-center text-brand-500 text-sm mb-8">
+                    <p className="text-center text-brand-500 text-xs sm:text-sm mb-6">
                         Sign in to manage your products and orders.
                     </p>
 

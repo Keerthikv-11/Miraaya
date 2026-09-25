@@ -116,33 +116,33 @@ export const CategoryPage = ({
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-8">
       {/* Banner */}
-      <div className="bg-brand-100 rounded-sm py-16 px-8 text-center mb-12">
-        <h1 className="font-serif text-4xl md:text-5xl mb-4 text-brand-900">
+      <div className="bg-brand-100 rounded-xs py-8 sm:py-16 px-4 sm:px-8 text-center mb-6 sm:mb-12">
+        <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl mb-2 sm:mb-4 text-brand-900">
           {title}
         </h1>
 
-        <p className="text-brand-700 max-w-2xl mx-auto">
+        <p className="text-brand-700 text-xs sm:text-sm max-w-2xl mx-auto">
           {description}
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Mobile Filter Toggle */}
-        <div className="lg:hidden flex justify-between items-center mb-4">
+        <div className="lg:hidden flex justify-between items-center mb-2">
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="flex items-center gap-2 font-medium uppercase tracking-widest text-sm border border-brand-200 px-4 py-2 rounded-sm"
+            className="flex items-center gap-1.5 font-medium uppercase tracking-wider text-xs border border-brand-200 px-3 py-1.5 rounded-xs bg-white"
           >
-            <SlidersHorizontal size={16} />
+            <SlidersHorizontal size={14} />
             Filters
           </button>
 
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="border-none bg-transparent font-medium uppercase tracking-widest text-sm focus:ring-0 cursor-pointer"
+            className="border border-brand-200 bg-white font-medium uppercase tracking-wider text-xs px-2.5 py-1.5 rounded-xs focus:ring-brand-900 cursor-pointer"
           >
             <option value="featured">Featured</option>
             <option value="newest">Newest</option>
@@ -299,7 +299,7 @@ export const CategoryPage = ({
           {!loading &&
             !error &&
             sortedProducts.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                 {sortedProducts.map((product) => (
                   <ProductCard
                     key={product.id}

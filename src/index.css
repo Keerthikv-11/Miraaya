@@ -3,12 +3,27 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-size: 14px;
+  }
+  @media (min-width: 640px) {
+    html {
+      font-size: 15px;
+    }
+  }
+  @media (min-width: 1024px) {
+    html {
+      font-size: 16px;
+    }
+  }
+
   body {
-    @apply font-sans text-brand-900 bg-brand-50 antialiased;
+    @apply font-sans text-brand-900 bg-brand-50 antialiased selection:bg-brand-200 selection:text-brand-900 text-sm md:text-base leading-normal md:leading-relaxed;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    @apply font-serif tracking-tight leading-tight;
   }
 }
 

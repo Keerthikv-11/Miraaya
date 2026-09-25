@@ -54,8 +54,8 @@ export const Cart = () => {
   const finalTotal = cartTotal + shipping;
 
   return (
-    <div className="container mx-auto px-4 py-12 lg:py-20">
-      <h1 className="font-serif text-3xl md:text-5xl mb-12">
+    <div className="container mx-auto px-3 sm:px-6 py-6 sm:py-14">
+      <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl mb-6 sm:mb-10 text-brand-900 font-semibold">
         Shopping Cart ({cartItemCount})
       </h1>
 

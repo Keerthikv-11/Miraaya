@@ -75,58 +75,58 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm pt-20 px-4 transition-opacity">
-            <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-brand-100 animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm pt-8 sm:pt-20 px-3 transition-opacity">
+            <div className="w-full max-w-3xl bg-white rounded-xl shadow-2xl overflow-hidden border border-brand-100 animate-in fade-in zoom-in duration-200">
                 
                 {/* Search Bar Header */}
-                <div className="relative flex items-center px-6 py-4 border-b border-brand-100 bg-brand-50/50">
-                    <Search className="text-brand-400 mr-3 shrink-0" size={22} />
+                <div className="relative flex items-center px-4 py-3 sm:px-6 sm:py-4 border-b border-brand-100 bg-brand-50/50">
+                    <Search className="text-brand-400 mr-2.5 shrink-0" size={19} />
                     <input
                         autoFocus
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search for Sarees, Jewellery, Dresses, or keywords..."
-                        className="w-full bg-transparent text-base md:text-lg text-brand-900 placeholder-brand-400 outline-none font-sans"
+                        placeholder="Search for Sarees, Jewellery, Dresses..."
+                        className="w-full bg-transparent text-xs sm:text-base text-brand-900 placeholder-brand-400 outline-none font-sans"
                     />
                     {query && (
                         <button
                             onClick={() => setQuery('')}
-                            className="p-1 text-brand-400 hover:text-brand-800 rounded-full mr-2"
+                            className="p-1 text-brand-400 hover:text-brand-800 rounded-full mr-1"
                         >
-                            <X size={18} />
+                            <X size={16} />
                         </button>
                     )}
                     <button
                         onClick={onClose}
-                        className="p-2 text-brand-500 hover:text-brand-900 rounded-lg hover:bg-brand-100 transition-colors"
+                        className="p-1.5 text-brand-500 hover:text-brand-900 rounded-lg hover:bg-brand-100 transition-colors"
                     >
-                        <X size={22} />
+                        <X size={20} />
                     </button>
                 </div>
 
                 {/* Popular Keywords / Categories */}
                 {!query && (
-                    <div className="p-6">
-                        <p className="text-xs font-semibold uppercase tracking-widest text-brand-400 mb-3">
+                    <div className="p-4 sm:p-6">
+                        <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-brand-400 mb-2.5">
                             Popular Categories & Keywords
                         </p>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                             <button
                                 onClick={() => handleQuickCategory('/sarees')}
-                                className="px-4 py-2 bg-brand-50 hover:bg-brand-900 hover:text-white text-brand-800 rounded-full text-sm font-medium transition-all"
+                                className="px-3 py-1.5 bg-brand-50 hover:bg-brand-900 hover:text-white text-brand-800 rounded-full text-xs font-medium transition-all"
                             >
                                 Sarees
                             </button>
                             <button
                                 onClick={() => handleQuickCategory('/jewellery')}
-                                className="px-4 py-2 bg-brand-50 hover:bg-brand-900 hover:text-white text-brand-800 rounded-full text-sm font-medium transition-all"
+                                className="px-3 py-1.5 bg-brand-50 hover:bg-brand-900 hover:text-white text-brand-800 rounded-full text-xs font-medium transition-all"
                             >
                                 Jewellery
                             </button>
                             <button
                                 onClick={() => handleQuickCategory('/dresses')}
-                                className="px-4 py-2 bg-brand-50 hover:bg-brand-900 hover:text-white text-brand-800 rounded-full text-sm font-medium transition-all"
+                                className="px-3 py-1.5 bg-brand-50 hover:bg-brand-900 hover:text-white text-brand-800 rounded-full text-xs font-medium transition-all"
                             >
                                 Dresses
                             </button>
