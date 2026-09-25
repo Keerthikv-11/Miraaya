@@ -1145,11 +1145,11 @@ const AdminDashboard: React.FC = () => {
                                 }
                                 className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-gray-900"
                             >
-                                <option value="Sarees">
+                                <option value="Saree">
                                     Sarees
                                 </option>
 
-                                <option value="Dresses">
+                                <option value="Dresse">
                                     Dresses
                                 </option>
 
